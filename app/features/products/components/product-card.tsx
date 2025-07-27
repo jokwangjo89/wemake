@@ -28,7 +28,7 @@ export function ProductCard({
 }: ProductCardProps) {
   return (
     <Link to={to}>
-      <Card className="w-full flex items-center justify-between bg-transparent hover:bg-gray-100/50">
+      <Card className="w-full flex items-center justify-between bg-transparent hover:bg-card/50">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold leading-none tracking-tight">{title}</CardTitle>
           <CardDescription className="text-sm text-muted-foreground">{description}</CardDescription>
