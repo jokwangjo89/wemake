@@ -1,10 +1,12 @@
 
 import { Link, type MetaFunction } from "react-router";
-import { ChevronUpIcon, DotIcon, EyeIcon, HeartIcon, MessageCircleIcon } from "lucide-react";
+import { Car, ChevronUpIcon, DotIcon, EyeIcon, HeartIcon, MessageCircleIcon } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { ProductCard } from "../../features/products/components/product-card";
 import { PostCard } from "../../features/community/components/post-card";
 import { IdeaCard } from "../../features/ideas/components/idea-card";
+import { JobCard } from "../../features/jobs/components/job-card";
+
 
 export const meta:MetaFunction = () => {
   return [
@@ -73,6 +75,28 @@ export default function Homepage() {
           timeAgo="12 hours ago"
           likeCount={12}
           claimed ={index % 2 === 0}
+        />
+        ))}
+      </div>
+      <div className="grid grid-cols-4 gap-4">
+        <div >
+          <h2 className="text-5xl font-bold leading-tight tracking-tighter">Latest Jobs</h2>
+          <p className="text-xl font-light text-foreground">Find your dream job.</p>
+          <Button variant="link" className="text-lg p-0" asChild>
+            <Link to="/jobs">Explore all jobs &rarr;</Link>
+          </Button>
+        </div>
+        {Array.from({ length: 11 }).map((_, index) => (
+          <JobCard
+          jobId="jobId"
+          company="NVIDIA"
+          companyLogoUrl="https://github.com/nvidia.png"
+          companyHq="San Francisco, CA"
+          title="Software Engineer"
+          postedAt="12 hours ago"
+          positionLocation="Remote"
+          type="Full-time"
+          salary="$100,000 - $120,000"
         />
         ))}
       </div>
