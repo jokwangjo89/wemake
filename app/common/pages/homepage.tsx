@@ -6,6 +6,7 @@ import { ProductCard } from "../../features/products/components/product-card";
 import { PostCard } from "../../features/community/components/post-card";
 import { IdeaCard } from "../../features/ideas/components/idea-card";
 import { JobCard } from "../../features/jobs/components/job-card";
+import { TeamCard } from "../../features/teams/components/team-card";
 
 
 export const meta:MetaFunction = () => {
@@ -97,6 +98,25 @@ export default function Homepage() {
           positionLocation="Remote"
           type="Full-time"
           salary="$100,000 - $120,000"
+        />
+        ))}
+      </div>
+      <div className="grid grid-cols-4 gap-4">
+        <div >
+          <h2 className="text-5xl font-bold leading-tight tracking-tighter">Find a team mate</h2>
+          <p className="text-xl font-light text-foreground">Join a team looking for a new member.</p>
+          <Button variant="link" className="text-lg p-0" asChild>
+            <Link to="/teams"> Explore all teams &rarr;</Link>
+          </Button>
+        </div>
+        {Array.from({ length: 7 }).map((_, index) => (
+          <TeamCard
+          teamId="teamId"
+          leaderUserName="kwangjo"
+          leaderAvatarUrl="https://github.com/jokwangjo89.png"
+          leaderInitial="N"
+          positions={["React Developer", "Backend Developer", "Product Manager"]}
+          projectDescription="a new social media platform"
         />
         ))}
       </div>
