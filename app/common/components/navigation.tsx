@@ -156,7 +156,7 @@ export default function Navigation({ isLoggedIn, hasNotifications, hasMessages }
                           <NavigationMenuLink asChild>
                             <Link
                               className="p-3 space-y-1 block leading-none no-underline outline-none"
-                              to={item.to}>{item.name}
+                              to={item.to}>
                               <span className="text-sm font-medium leading-none">{item.name}</span>
                               <p className="text-sm text-muted-foreground">
                                 {item.description}
