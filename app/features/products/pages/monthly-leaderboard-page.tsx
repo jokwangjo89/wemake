@@ -9,6 +9,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+
 export default function MonthlyLeaderboardPage() {
   return (
     <div className="px-20 space-y-8">

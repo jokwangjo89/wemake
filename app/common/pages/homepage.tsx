@@ -1,5 +1,6 @@
 
 import { Link, type MetaFunction } from "react-router";
+import type { Route } from "../../+types/routes";
 import { Car, ChevronUpIcon, DotIcon, EyeIcon, HeartIcon, MessageCircleIcon } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { ProductCard } from "../../features/products/components/product-card";
@@ -16,12 +17,20 @@ export const meta:MetaFunction = () => {
   ];
 };
 
-export default function Homepage() {
+export const loader = () => {
+  console.log("hello");
+  return {
+    hello: "world",
+    hello2: "world2",
+  };
+};
+
+export default function Homepage({ loaderData }: Route["ComponentProps"]) {
   return (  
     <div className="px-20 space-y-40" >
       <div className="grid grid-cols-3 gap-4">
         <div >
-          <h2 className="text-5xl font-bold leading-tight tracking-tighter">Today's Products</h2>
+          <h2 className="text-5xl font-bold leading-tight tracking-tighter">Today's Products{JSON.stringify(loaderData)}</h2>
           <p className="text-xl font-light text-foreground">The best products made by our community today.</p>
           <Button variant="link" className="text-lg p-0" asChild>
             <Link to="/products/leaderboards">Explore all products &rarr;</Link>
