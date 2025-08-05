@@ -17,13 +17,7 @@ export const meta:MetaFunction = () => {
   ];
 };
 
-export const loader = () => {
-  console.log("hello");
-  return {
-    hello: "world",
-    hello2: "world2",
-  };
-};
+
 
 export default function Homepage({ loaderData }: Route["ComponentProps"]) {
   return (  
