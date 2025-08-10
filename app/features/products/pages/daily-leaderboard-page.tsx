@@ -1,38 +1,80 @@
-import { type MetaFunction } from "react-router";
-import { ProductCard } from "../components/product-card";
-import { MessageCircleIcon, EyeIcon, ChevronUpIcon } from "lucide-react";
+import { DateTime } from "luxon";
+import type { Route } from "./+types/daily-leaderboard-page";
+import { data, isRouteErrorResponse } from "react-router";
+import { z } from "zod";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Daily Leaderboard | wemake" },
-    { name: "description", content: "Top products of the day" },
-  ];
-};
+const paramSchema = z.object({
+  year: z.coerce.number(),
+  month: z.coerce.number(),
+  day: z.coerce.number(),
+});
+
+export const loader = ({ params }: Route.LoaderArgs) => {
+  const { success, data: pasedData } = paramSchema.safeParse(params);
+  if(!success) {
+    throw data(
+      {
+        error_code: "invalid_date",
+        message: "Invalid date",
+      },
+      { status: 400 }
+    );
+  }
+  const date = DateTime.fromObject(pasedData).setZone("Asia/Seoul");
+  if (!date.isValid) {
+    throw data(
+      {
+        error_code: "invalid_date",
+        message: "Invalid date",
+      },
+      { status: 400 }
+    );
+  }
+  const today = DateTime.now().setZone("Asia/Seoul").startOf("day");
+  if(date > today) {
+    throw data(
+      {
+        error_code: "future_date",
+        message: "Future date",
+      },
+      { status: 400 }
+    );
+  }
+  return {
+    date, 
+  }
+}  
+
 
 export default function DailyLeaderboardPage() {
-  return (
-    <div className="px-20 space-y-8">
-      <div className="space-y-4">
-        <h1 className="text-5xl font-bold leading-tight tracking-tighter">Daily Leaderboard</h1>
-        <p className="text-xl font-light text-foreground">Top products of the day based on votes and engagement</p>
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-4">Daily Leaderboard</h1>
+        <p className="text-gray-600 mb-8">
+          Top products of the day based on votes and engagement
+        </p>
       </div>
-      
-      <div className="grid grid-cols-3 gap-6">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <ProductCard
-            key={index}
-            to={`/products/${index + 1}`}
-            title={`Today's Best Product ${index + 1}`}
-            description={`This product was one of the best performers today.`}
-            commentCount={Math.floor(Math.random() * 100) + 50}
-            viewCount={Math.floor(Math.random() * 5000) + 2000}
-            voteCount={Math.floor(Math.random() * 1000) + 500}
-            MessageCircleIcon={<MessageCircleIcon className="w-4 h-4" />}
-            EyeIcon={<EyeIcon className="w-4 h-4" />}
-            ChevronUpIcon={<ChevronUpIcon className="size-4 shrink-0" />}
-          />
-        ))}
-      </div>
-    </div>
   );
-} 
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>{error.data.message} / {error.data.error_code}</p>
+      </div>
+    );
+  }
+  if(error instanceof Error) {
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>{error.message}</p>
+      </div>
+    );
+  }
+  return (
+    <div>Unknown Error</div>
+  );
+}
