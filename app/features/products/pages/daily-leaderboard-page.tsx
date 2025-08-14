@@ -2,6 +2,12 @@ import { DateTime } from "luxon";
 import type { Route } from "./+types/daily-leaderboard-page";
 import { data, isRouteErrorResponse } from "react-router";
 import { z } from "zod";
+import { HeroHeader } from "~/common/components/hero-header";
+import { ChevronUpIcon, EyeIcon, MessageCircleIcon } from "lucide-react";
+import { ProductCard } from "../components/product-card";
+import { Link } from "react-router";
+import { Button } from "~/common/components/ui/button";
+import { ProductPagination } from "~/common/components/product-pagination";
 
 const paramSchema = z.object({
   year: z.coerce.number(),
@@ -10,7 +16,7 @@ const paramSchema = z.object({
 });
 
 export const loader = ({ params }: Route.LoaderArgs) => {
-  const { success, data: pasedData } = paramSchema.safeParse(params);
+  const { success, data: parsedData } = paramSchema.safeParse(params);
   if(!success) {
     throw data(
       {
@@ -20,7 +26,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
-  const date = DateTime.fromObject(pasedData).setZone("Asia/Seoul");
+  const date = DateTime.fromObject(parsedData).setZone("Asia/Seoul");
   if (!date.isValid) {
     throw data(
       {
@@ -41,20 +47,54 @@ export const loader = ({ params }: Route.LoaderArgs) => {
     );
   }
   return {
-    date, 
+    ...parsedData, 
   }
 }  
 
 
-export default function DailyLeaderboardPage() {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-4">Daily Leaderboard</h1>
-        <p className="text-gray-600 mb-8">
-          Top products of the day based on votes and engagement
-        </p>
-      </div>
-  );
+export default function DailyLeaderboardPage(
+  { loaderData, }: Route.ComponentProps) {
+  const urlDate = DateTime.fromObject({
+    year: loaderData.year,
+    month: loaderData.month,
+    day: loaderData.day,
+  });
+  const previousDay = urlDate.minus({ days: 1 });
+  const nextDay = urlDate.plus({ days: 1 });
+  const isToday = urlDate.equals(DateTime.now().startOf("day"));
+  return <div className="space-y-10">
+    <HeroHeader title={`The best products of ${urlDate.toLocaleString(DateTime.DATE_MED)}`} description="Top products of the day based on votes and engagement" />
+    <div className="flex items-center justify-center gap-4">
+      <Link to={`/products/leaderboards/daily/${previousDay.year}/${previousDay.month}/${previousDay.day}`}>
+        <Button variant="secondary">&larr; {previousDay.toLocaleString(DateTime.DATE_SHORT)}</Button>
+      </Link>
+      {!isToday ? 
+      <Button variant="secondary" asChild>
+        <Link to={`/products/leaderboards/daily/${nextDay.year}/${nextDay.month}/${nextDay.day}`}>
+          {nextDay.toLocaleString(DateTime.DATE_SHORT)} &rarr;
+        </Link>
+      </Button>
+      : null
+      }
+    </div>
+    <div className="space-y-5 w-full max-w-screen-md mx-auto">
+      {Array.from({ length: 10 }).map((_, index) => ( 
+            <ProductCard
+            to="/products/productId"
+            title="Product Name"
+            description="Product Description"
+            commentCount={12}
+            viewCount={12}
+            voteCount={120}
+            MessageCircleIcon={<MessageCircleIcon className="w-4 h-4" />}
+            EyeIcon={<EyeIcon className="w-4 h-4" />}
+            ChevronUpIcon={<ChevronUpIcon className="size-4 shrink-0" />}
+          />
+          ))}
+    </div>
+    <ProductPagination totalPages={10} />
+    
+  </div>
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
